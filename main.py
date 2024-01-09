@@ -1,9 +1,11 @@
 def count_words(the_content):
     words = the_content.split()
     for index in range(len(words)):
-        words[index] = "".join(x for x in words[index])
+        words[index] = "".join(x for x in words[index] if x.isalpha())
 
-    word_count = len(words)
+    cleaned_words = list(filter(None, words))
+
+    word_count = len(cleaned_words)
     total_chars = sum([len(x) for x in words])
     avg_word_len = total_chars / word_count
 
@@ -15,7 +17,7 @@ def count_words(the_content):
 def find_word(the_word, the_content):
     words = the_content.split()
     for index in range(len(words)):
-        words[index] = "".join(x for x in words[index])
+        words[index] = "".join(x for x in words[index] if x.isalpha())
 
     word_occurrences_count = len([x for x in words if x.lower() == the_word.lower()])
 
@@ -33,7 +35,7 @@ def find_word_coordinates(the_content, the_word):
     for current_row in data:
         current_row = ''.join(current_row).split()
         for index in range(len(current_row)):
-            current_row[index] = "".join(x for x in current_row[index])
+            current_row[index] = "".join(x for x in current_row[index] if x.isalpha())
         data_matrix.append(current_row)
 
     # SEARCHES FOR THE WORD IN THE MATRIX AND ADDS ALL COORDINATES TO THE LIST, AS TUPLE
