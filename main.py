@@ -1,52 +1,52 @@
-def count_words(the_content):
-    words = the_content.split()
-    for index in range(len(words)):
-        words[index] = "".join(x for x in words[index] if x.isalpha())
-
-    cleaned_words = list(filter(None, words))
-
-    word_count = len(cleaned_words)
-    total_chars = sum([len(x) for x in words])
-    avg_word_len = total_chars / word_count
-
-    print(f"Total words in the file: {word_count}")
-    print(f"Total characters in the file: {len([x for x in the_content if x != ' '])}")
-    print(f"The average word length is {avg_word_len:.2f} characters.")
+import re
 
 
-def find_word(the_word, the_content):
-    words = the_content.split()
-    for index in range(len(words)):
-        words[index] = "".join(x for x in words[index] if x.isalpha())
+def document_stats(file_content):
+    def count_words_and_avg_word_len():
+        words_pattern = r'\b\w+\b'
 
-    word_occurrences_count = len([x for x in words if x.lower() == the_word.lower()])
+        # count words:
+        words_only = re.findall(words_pattern, file_content)
+        words_count = len(words_only)
 
-    print(f"The word '{the_word}' appears {word_occurrences_count} time/s in the document.")
+        # average word length:
+        total_word_chars_count = sum(len(word) for word in words_only)
+        average_word_len = total_word_chars_count / words_count if words_count > 0 else 0
+
+        return words_count, average_word_len
+
+    def count_chars():
+        file_content_cleaned = file_content.split()
+
+        # count chars:
+        chars_count_excluding_whitespaces = len(''.join(file_content_cleaned))
+        chars_count_including_whitespaces = len(file_content)
+
+        return chars_count_including_whitespaces, chars_count_excluding_whitespaces
+
+    def count_sentences():
+        # count sentences:
+        sentences_count = len([x for x in file_content if x in [".", ";", ":", "...", "?", "!"]])
+
+        return sentences_count
+
+    count_words, avg_word_len = count_words_and_avg_word_len()
+    chars_including, chars_excluding = count_chars()
+    sent_count = count_sentences()
+
+    return f"\nDOCUMENT STATS:" \
+           f"\n-Total words in the file: {count_words}" \
+           f"\n-Average word length: {avg_word_len:.1f} characters." \
+           f"\n-Total characters in the file(INCLUDING white spaces, tabs and new lines: {chars_including}" \
+           f"\n-Total characters in the file(EXCLUDING white spaces, tabs and new lines: {chars_excluding}" \
+           f"\n-Total sentences in the file: {sent_count}"
 
 
-def find_word_coordinates(the_content, the_word):
-    coordinates = []
-    data_matrix = []
-
-    # SPLITS THE TEXT BY ROWS
-    data = the_content.split('\n')
-
-    # REMOVES WHITE SPACES, REMOVES ALL CHARS WHICH ARE NOT ALPHABETIC(ONLY ACTUAL WORDS REMAIN), ADDS THEM TO MATRIX
-    for current_row in data:
-        current_row = ''.join(current_row).split()
-        for index in range(len(current_row)):
-            current_row[index] = "".join(x for x in current_row[index] if x.isalpha())
-        data_matrix.append(current_row)
-
-    # SEARCHES FOR THE WORD IN THE MATRIX AND ADDS ALL COORDINATES TO THE LIST, AS TUPLE
-    for i, row in enumerate(data_matrix):
-        for j, element in enumerate(row):
-            if element.lower() == the_word.lower():
-                coordinates.append((i, j))
-
-    if coordinates:
-        print(f"The word '{the_word}' can be found at the following "
-              f"coordinates(row/column) in the document: {coordinates}.")
+def options_display_menu():
+    print("\nOptions Menu:")
+    print("1. Documents stats")
+    print("2. Search for word")
+    print("3. Exit")
 
 
 def main():
@@ -60,16 +60,22 @@ def main():
     except Exception as e:
         print(f'An error occurred: {e}')
 
-    count_words(content)
+    while True:
+        options_display_menu()
 
-    word_searched = input("\nIf you want to search for a word, "
-                          "please enter it(case INSENSITIVE). Otherwise, enter 'N': ")
+        option_selected = input("\nPlease, enter your choice from the menu: ")
 
-    if word_searched.upper() != "N":
-        find_word(word_searched, content)
-        find_word_coordinates(content, word_searched)
-    else:
-        print("Thank you for using our services. Goodbye.")
+        if option_selected == "1":
+            print(document_stats(content))
+            break
+        elif option_selected == "2":
+            pass
+        elif option_selected == "3":
+            print("\nThank you for using our service. Goodbye!")
+            break
+        else:
+            print("\nPlease, select a valid option.")
 
 
-main()
+if __name__ == "__main__":
+    main()
