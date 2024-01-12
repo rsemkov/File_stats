@@ -4,16 +4,21 @@ import re
 def option_1_document_stats(file_content):
     def count_words_and_avg_word_len():
         words_pattern = r'\b\w+\b'
-
-        # count words:
+        # count words and unique words:
         words_only = re.findall(words_pattern, file_content)
         words_count = len(words_only)
+        unique_words_count = len(set(words_only))
+
+        # longest and shortest word:
+        all_words_lengths = [len(x) for x in words_only]
+        longest_word_len = max(all_words_lengths)
+        shortest_word_len = min(all_words_lengths)
 
         # average word length:
         total_word_chars_count = sum(len(word) for word in words_only)
         average_word_len = total_word_chars_count / words_count if words_count > 0 else 0
 
-        return words_count, average_word_len
+        return words_count, average_word_len, unique_words_count, longest_word_len, shortest_word_len
 
     def count_chars():
         file_content_cleaned = file_content.split()
@@ -26,17 +31,19 @@ def option_1_document_stats(file_content):
 
     def count_sentences():
         # count sentences:
-        sentences_count = len([x for x in file_content if x in [".", ";", ":", "...", "?", "!"]])
+        sentences_count = sum([1 for x in file_content if x in [".", ";", ":", "...", "?", "!"]])
 
         return sentences_count
 
-    count_words, avg_word_len = count_words_and_avg_word_len()
+    count_words, avg_word_len, unique_words, longest_word, shortest_word = count_words_and_avg_word_len()
     chars_including, chars_excluding = count_chars()
     sent_count = count_sentences()
 
     return f"\nDOCUMENT STATS:" \
            f"\n-Total words in the file: {count_words}" \
+           f"\n-Total unique words in the file: {unique_words}" \
            f"\n-Average word length: {avg_word_len:.1f} characters." \
+           f"\n-The longest word in the file is {longest_word} chars, and the shortest one is {shortest_word} chars." \
            f"\n-Total characters in the file(INCLUDING white spaces, tabs and new lines: {chars_including}" \
            f"\n-Total characters in the file(EXCLUDING white spaces, tabs and new lines: {chars_excluding}" \
            f"\n-Total sentences in the file: {sent_count}"
@@ -67,6 +74,8 @@ def option_2_word_search(file_content, searched_word):
             current_row = ''.join(current_row).split()
             for index in range(len(current_row)):
                 current_row[index] = "".join(x for x in current_row[index] if x.isalpha())
+            # gets rid of empty space elements
+            current_row = [x for x in current_row if x != ""]
             data_matrix.append(current_row)
 
         # SEARCHES FOR THE WORD IN THE MATRIX AND ADDS ALL COORDINATES TO THE LIST, AS TUPLE
