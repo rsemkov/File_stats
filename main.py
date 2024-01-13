@@ -2,51 +2,78 @@ import re
 
 
 def option_1_document_stats(file_content):
-    def count_words_and_avg_word_len():
-        words_pattern = r'\b\w+\b'
-        # count words and unique words:
-        words_only = re.findall(words_pattern, file_content)
+    words_pattern = r'\b\w+\b'
+    words_only = re.findall(words_pattern, file_content)
+
+    def count_words_unique_words_and_avg_word_len():
+        # count words and unique words
         words_count = len(words_only)
         unique_words_count = len(set(words_only))
 
-        # longest and shortest word:
+        # average word length
+        total_word_chars_count = sum(len(word) for word in words_only)
+        average_word_len = total_word_chars_count / words_count if words_count > 0 else 0
+
+        return words_count, average_word_len, unique_words_count
+
+    def shortest_and_longest_word():
+        # longest and shortest word
         all_words_lengths = [len(x) for x in words_only]
         longest_word_len = max(all_words_lengths)
         shortest_word_len = min(all_words_lengths)
 
-        # average word length:
-        total_word_chars_count = sum(len(word) for word in words_only)
-        average_word_len = total_word_chars_count / words_count if words_count > 0 else 0
+        return longest_word_len, shortest_word_len
 
-        return words_count, average_word_len, unique_words_count, longest_word_len, shortest_word_len
+    def word_frequency():
+        # store list of all words and their occurrences and list of all words used the most(in case they are > 1)
+        words_used = {}
+        most_used_words = []
+        all_words_lower_case = [x.upper() for x in words_only]
+
+        for word in all_words_lower_case:
+            if word not in words_used:
+                words_used[word] = 0
+            words_used[word] += 1
+
+        max_value = max(words_used.values())
+
+        for key, value in words_used.items():
+            if value == max_value:
+                most_used_words.append(key)
+
+        return most_used_words, max_value
 
     def count_chars():
         file_content_cleaned = file_content.split()
 
-        # count chars:
+        # count chars
         chars_count_excluding_whitespaces = len(''.join(file_content_cleaned))
         chars_count_including_whitespaces = len(file_content)
 
         return chars_count_including_whitespaces, chars_count_excluding_whitespaces
 
     def count_sentences():
-        # count sentences:
+        # count sentences
         sentences_count = sum([1 for x in file_content if x in [".", ";", ":", "...", "?", "!"]])
 
         return sentences_count
 
-    count_words, avg_word_len, unique_words, longest_word, shortest_word = count_words_and_avg_word_len()
+    count_words, avg_word_len, unique_words= count_words_unique_words_and_avg_word_len()
+    longest_word, shortest_word = shortest_and_longest_word()
     chars_including, chars_excluding = count_chars()
     sent_count = count_sentences()
+    most_used, frequency = word_frequency()
 
     return f"\nDOCUMENT STATS:" \
-           f"\n-Total words in the file: {count_words}" \
-           f"\n-Total unique words in the file: {unique_words}" \
-           f"\n-Average word length: {avg_word_len:.1f} characters." \
-           f"\n-The longest word in the file is {longest_word} chars, and the shortest one is {shortest_word} chars." \
-           f"\n-Total characters in the file(INCLUDING white spaces, tabs and new lines: {chars_including}" \
-           f"\n-Total characters in the file(EXCLUDING white spaces, tabs and new lines: {chars_excluding}" \
-           f"\n-Total sentences in the file: {sent_count}"
+           f"\n1. Total words in the file: {count_words}" \
+           f"\n  -Total unique words in the file: {unique_words}" \
+           f"\n  -Average word length: {avg_word_len:.1f} characters." \
+           f"\n  -The longest word in the file is {longest_word} char/s, and the shortest one is {shortest_word} char/s." \
+           f"\n  -The most used word/s is: {', '.join(most_used)}, with {frequency} occurrences." \
+           f"\n2. Total characters in the file:" \
+           f"\n  -Including white spaces, tabs and new lines: {chars_including}" \
+           f"\n  -Excluding white spaces, tabs and new lines: {chars_excluding}" \
+           f"\n3. Total sentences in the file: {sent_count}"
 
 
 def option_2_word_search(file_content, searched_word):
