@@ -113,18 +113,28 @@ def option_2_word_search(file_content, searched_word):
 
         return coordinates
 
+    def find_sentences_with_word():
+        sentence_endings = r'[.!?;...:]'
+
+        sentences = re.split(sentence_endings, file_content)
+        sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
+
+        return sentences
+
     word_count = word_occurrences_count()
     word_coordinates = word_coordinates_search()
+    sentences_containing_word = find_sentences_with_word()
 
     for r, c in word_coordinates:
-        coordinates_result += f"\nRow: {r + 1}, Word number: {c + 1}"
+        coordinates_result += f"\n\tRow: {r + 1}, Word number: {c + 1}"
 
     if word_count == 0:
         return f"\nThe word '{searched_word}' cannot be found in the document."
     else:
-        return f"\nThe word '{searched_word}' can be found {word_count} time/s in the document." \
-               f"\nIt can be found at the following coordinates:" \
-               f"{coordinates_result}"
+        return f"\n1.The word '{searched_word}' can be found {word_count} time/s in the document." \
+               f"\n2.It can be found at the following coordinates:" \
+               f"{coordinates_result}" \
+               f"\n3.The word can be found in the following sentences:\n{sentences_containing_word}"
 
 
 def options_display_menu():
