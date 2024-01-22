@@ -116,10 +116,11 @@ def option_2_word_search(file_content, searched_word):
     def find_sentences_with_word():
         sentence_endings = r'[.!?;...:]'
 
-        sentences = re.split(sentence_endings, file_content)
+        sentences = re.split(sentence_endings, file_content, flags=re.IGNORECASE)
         sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
+        sentences_with_word = [sentence for sentence in sentences if re.search(searched_word, sentence, flags=re.IGNORECASE)]
 
-        return sentences
+        return sentences_with_word
 
     word_count = word_occurrences_count()
     word_coordinates = word_coordinates_search()
@@ -148,7 +149,7 @@ def main():
     file_path = input("Please, enter the file path: ")
 
     try:
-        with open(file_path, "r") as file:
+        with open(file_path, "r", encoding='utf-8') as file:
             content = file.read()
     except FileNotFoundError:
         print(f'File not found: {file_path}')
