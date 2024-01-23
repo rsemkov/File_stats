@@ -117,8 +117,9 @@ def option_2_word_search(file_content, searched_word):
         sentence_endings = r'[.!?;...:]'
 
         sentences = re.split(sentence_endings, file_content, flags=re.IGNORECASE)
-        sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
-        sentences_with_word = [sentence for sentence in sentences if re.search(searched_word, sentence, flags=re.IGNORECASE)]
+        sentences_stripped = [sentence.strip() for sentence in sentences if sentence.strip()]
+        sentences_with_word = [sentence for sentence in sentences_stripped
+                               if re.search(searched_word, sentence, flags=re.IGNORECASE)]
 
         return sentences_with_word
 
@@ -135,7 +136,9 @@ def option_2_word_search(file_content, searched_word):
         return f"\n1.The word '{searched_word}' can be found {word_count} time/s in the document." \
                f"\n2.It can be found at the following coordinates:" \
                f"{coordinates_result}" \
-               f"\n3.The word can be found in the following sentences:\n{sentences_containing_word}"
+               f"\n3.The word(and its variations) can be found in the following {len(sentences_containing_word)} " \
+               f"sentences:\n{sentences_containing_word}" \
+
 
 
 def options_display_menu():
